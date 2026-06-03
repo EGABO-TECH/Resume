@@ -1,5 +1,9 @@
 #  Personal Interactive Resume & Portfolio Builder
 
+<p align="center">
+	<img src="assets/Resume-Builder-Banner.png" alt="Resume Builder" width="420" />
+</p>
+
 A sleek, responsive, single-file web application designed to act as both a dynamic digital portfolio and a high-fidelity physical resume generator. 
 
 Built with modern web standards, it showcases my engineering experience, projects, and technical skills in a highly interactive format.
