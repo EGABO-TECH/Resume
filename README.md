@@ -13,7 +13,7 @@ Built with modern web standards, it showcases my engineering experience, project
 ##  Features
 
 - **Dynamic Theme Engine:** Switch instantly between custom visual aesthetics (Burgundy, Deep Slate, Emerald, and Navy) using the on-screen controller.
-- **Live In-Browser Editing:** Full `contenteditable` integration lets you modify experience bullet points, adjust dates, or tweak text blocks directly in the live layout.
+- **Live In-Browser Editing:** Full `content editable` integration lets you modify experience bullet points, adjust dates, or tweak text blocks directly in the live layout.
 - **Print-Ready Stylesheet:** Formatted with tailored `@media print` CSS rules. When you hit print (`Cmd + P` or `Ctrl + P`), the editing toolbar instantly hides, adapting the layout into a clean, dual-column PDF.
 - **Zero Dependencies:** Built purely with semantic HTML5, modern CSS variables, and vanilla JavaScript—no bulky frameworks, configuration, or setup required.
 
