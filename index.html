@@ -10,6 +10,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2canvas & jsPDF for single-page export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -158,9 +161,9 @@
                 </div>
 
                 <!-- Print Action Button -->
-                <button onclick="downloadVectorPDF()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
+                <button id="download-btn" onclick="downloadPDF()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
                     <i data-lucide="download" class="w-4 h-4"></i>
-                    Export Premium PDF
+                    Download as PDF
                 </button>
             </div>
         </div>
@@ -523,33 +526,52 @@
             body.classList.add('theme-' + themeName);
         }
 
-        // Generate Premium Vector PDF
-        function downloadVectorPDF() {
+        // Generate Premium Direct Download PDF
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
             const element = document.querySelector('.resume-container');
+            const button = document.getElementById('download-btn');
+            const originalHTML = button.innerHTML;
             
-            // Calculate the exact height of the resume in millimeters
-            // 1 inch = 25.4 mm. Standard CSS resolution is 96 DPI.
-            const heightInPx = element.offsetHeight;
-            const heightInMm = (heightInPx * 25.4) / 96;
-            
-            // Add a tiny buffer to prevent accidental overflow breaks
-            const pageHeight = Math.ceil(heightInMm) + 2; 
+            button.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Generating Premium PDF...';
+            lucide.createIcons();
+            button.disabled = true;
 
-            // Inject a dynamic print style to force the page size
-            let style = document.getElementById('dynamic-print-size');
-            if (!style) {
-                style = document.createElement('style');
-                style.id = 'dynamic-print-size';
-                document.head.appendChild(style);
+            // Strip the 'screenshot' UI elements (shadows, rounded corners)
+            // so the captured image is a flush, professional document.
+            const originalClasses = element.className;
+            element.classList.remove('shadow-xl', 'rounded-2xl', 'overflow-hidden');
+            
+            try {
+                // scale 2 with jpeg 0.95 gives high quality and tiny file size
+                const scale = 2;
+                const canvas = await html2canvas(element, { 
+                    scale: scale, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width / scale, canvas.height / scale]
+                });
+                
+                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width / scale, canvas.height / scale);
+                pdf.save('Egabo_Aaron_Resume.pdf');
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+                alert("Failed to generate PDF");
+            } finally {
+                // Restore UI elements
+                element.className = originalClasses;
+                
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+                lucide.createIcons();
             }
-            
-            // A4 width is 210mm. We set the height dynamically to match the content perfectly.
-            style.innerHTML = `@media print { @page { size: 210mm ${pageHeight}mm !important; margin: 0; } }`;
-            
-            // Give the browser a moment to apply the new style, then open the native print dialog
-            setTimeout(() => {
-                window.print();
-            }, 100);
         }
     </script>
 </body>
