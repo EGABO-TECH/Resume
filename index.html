@@ -10,6 +10,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- html2canvas & jsPDF for single-page export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Google Fonts (Inter) -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -160,9 +163,9 @@
                 </div>
 
                 <!-- Print Action Button -->
-                <button onclick="window.print()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
-                    <i data-lucide="printer" class="w-4 h-4"></i>
-                    Print / Save to PDF
+                <button id="download-btn" onclick="downloadPDF()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    Download as PDF
                 </button>
             </div>
         </div>
@@ -523,6 +526,44 @@
             const body = document.body;
             body.classList.remove('theme-burgundy', 'theme-slate', 'theme-emerald', 'theme-navy');
             body.classList.add('theme-' + themeName);
+        }
+
+        // Generate Single-Page PDF
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.querySelector('.resume-container');
+            const button = document.getElementById('download-btn');
+            const originalHTML = button.innerHTML;
+            
+            button.innerHTML = 'Generating PDF...';
+            button.disabled = true;
+            
+            try {
+                // Take a snapshot of the exact screen layout
+                const canvas = await html2canvas(element, { 
+                    scale: 2, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                
+                // Create PDF matching the exact dimensions of the canvas
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                
+                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+                pdf.save('Egabo_Aaron_Resume.pdf');
+            } catch (error) {
+                console.error("Error generating PDF:", error);
+                alert("Failed to generate PDF");
+            } finally {
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+            }
         }
     </script>
 </body>
