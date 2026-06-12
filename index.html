@@ -535,34 +535,39 @@
             const button = document.getElementById('download-btn');
             const originalHTML = button.innerHTML;
             
-            button.innerHTML = 'Generating PDF...';
+            button.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Generating HD PDF...';
+            lucide.createIcons();
             button.disabled = true;
             
             try {
-                // Take a snapshot of the exact screen layout
+                // Use a very high scale for maximum clarity (Retina/4K quality)
                 const canvas = await html2canvas(element, { 
-                    scale: 2, 
+                    scale: 4, 
                     useCORS: true,
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#ffffff',
+                    logging: false
                 });
                 
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                // Use PNG instead of JPEG to prevent compression artifacts on text edges
+                const imgData = canvas.toDataURL('image/png');
                 
                 // Create PDF matching the exact dimensions of the canvas
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'px',
-                    format: [canvas.width, canvas.height]
+                    format: [canvas.width / 4, canvas.height / 4] // Divide by 4 to match physical scale
                 });
                 
-                pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-                pdf.save('Egabo_Aaron_Resume.pdf');
+                // Add image scaled down to correct physical size for ultra-crisp display
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width / 4, canvas.height / 4);
+                pdf.save('Egabo_Aaron_Premium_Resume.pdf');
             } catch (error) {
                 console.error("Error generating PDF:", error);
                 alert("Failed to generate PDF");
             } finally {
                 button.innerHTML = originalHTML;
                 button.disabled = false;
+                lucide.createIcons();
             }
         }
     </script>
