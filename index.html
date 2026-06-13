@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Resume Builder</title>
     <!-- Tailwind CSS -->
-     <link rel="icon" href="assets/Symbol.png" type="image/png">
+    <link rel="icon" href="assets/Symbol.png" type="image/png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -14,7 +15,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <!-- Google Fonts (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -27,6 +29,7 @@
                 size: A4 portrait;
                 margin: 0;
             }
+
             body {
                 background-color: #ffffff !important;
                 -webkit-print-color-adjust: exact;
@@ -34,12 +37,15 @@
                 margin: 0;
                 padding: 0;
             }
+
             .no-print {
                 display: none !important;
             }
+
             .shadow-custom {
                 box-shadow: none !important;
             }
+
             .resume-container {
                 width: 100% !important;
                 max-width: 100% !important;
@@ -47,46 +53,63 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
+                /* Force scale to fit 1 page */
+                zoom: 0.80;
             }
+
             /* Force the 2-column layout to stay intact */
             .grid {
                 display: grid !important;
             }
+
             .md\:grid-cols-12 {
                 grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
             }
+
             .md\:col-span-4 {
                 grid-column: span 4 / span 4 !important;
             }
+
             .md\:col-span-8 {
                 grid-column: span 8 / span 8 !important;
             }
+
             .md\:flex-row {
                 flex-direction: row !important;
                 align-items: center !important;
             }
+
             .md\:text-left {
                 text-align: left !important;
             }
+
             .md\:mx-0 {
                 margin-left: 0 !important;
                 margin-right: 0 !important;
             }
+
             /* Reduce spacing to fit */
             header {
                 padding: 1.5rem 2.5rem !important;
             }
-            aside, section.md\:col-span-8 {
+
+            aside,
+            section.md\:col-span-8 {
                 padding: 1.5rem 2.5rem !important;
             }
+
             .gap-8 {
                 gap: 1.5rem !important;
             }
-            .space-y-6 > * + * {
+
+            .space-y-6>*+* {
                 margin-top: 1rem !important;
             }
+
             /* Avoid page break inside sections */
-            section, .experience-item, .activity-item {
+            section,
+            .experience-item,
+            .activity-item {
                 page-break-inside: avoid;
             }
         }
@@ -98,18 +121,21 @@
             --sidebar-bg: #FAF9F6;
             --primary-text: #7D3238;
         }
+
         .theme-slate {
             --primary-color: #1e293b;
             --primary-hover: #0f172a;
             --sidebar-bg: #f8fafc;
             --primary-text: #0f172a;
         }
+
         .theme-emerald {
             --primary-color: #064e3b;
             --primary-hover: #022c22;
             --sidebar-bg: #f0fdf4;
             --primary-text: #064e3b;
         }
+
         .theme-navy {
             --primary-color: #1e3a8a;
             --primary-hover: #172554;
@@ -118,10 +144,21 @@
             --primary-text: #1e3a8a;
         }
 
-        .bg-primary { background-color: var(--primary-color); }
-        .text-primary { color: var(--primary-text); }
-        .border-primary { border-color: var(--primary-color); }
-        .sidebar-bg { background-color: var(--sidebar-bg); }
+        .bg-primary {
+            background-color: var(--primary-color);
+        }
+
+        .text-primary {
+            color: var(--primary-text);
+        }
+
+        .border-primary {
+            border-color: var(--primary-color);
+        }
+
+        .sidebar-bg {
+            background-color: var(--sidebar-bg);
+        }
 
         /* Smooth edits highlight */
         [contenteditable="true"]:hover {
@@ -129,12 +166,14 @@
             background-color: rgba(59, 130, 246, 0.05);
             cursor: pointer;
         }
+
         [contenteditable="true"]:focus {
             outline: 2px solid #3b82f6;
             background-color: rgba(59, 130, 246, 0.08);
         }
     </style>
 </head>
+
 <body class="theme-burgundy min-h-screen text-slate-800 transition-colors duration-300 py-6 print:py-0">
 
     <!-- TOP CONTROL PANEL (HIDDEN IN PRINT) -->
@@ -146,22 +185,32 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-slate-900">Interactive Resume Builder</h1>
-                    <p class="text-xs text-slate-500">Live preview & editable template matching your exact design screenshots.</p>
+                    <p class="text-xs text-slate-500">Live preview & editable template matching your exact design
+                        screenshots.</p>
                 </div>
             </div>
-            
+
             <div class="flex flex-wrap items-center gap-3">
                 <!-- Color Theme Selector -->
                 <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
                     <span class="text-xs font-semibold text-slate-600">Theme:</span>
-                    <button onclick="setTheme('burgundy')" class="w-4 h-4 rounded-full bg-[#7D3238] border border-white shadow-sm hover:scale-110 transition-transform" title="Classic Burgundy"></button>
-                    <button onclick="setTheme('slate')" class="w-4 h-4 rounded-full bg-[#1e293b] border border-white shadow-sm hover:scale-110 transition-transform" title="Deep Slate"></button>
-                    <button onclick="setTheme('navy')" class="w-4 h-4 rounded-full bg-[#1e3a8a] border border-white shadow-sm hover:scale-110 transition-transform" title="Navy Blue"></button>
-                    <button onclick="setTheme('emerald')" class="w-4 h-4 rounded-full bg-[#064e3b] border border-white shadow-sm hover:scale-110 transition-transform" title="Emerald Green"></button>
+                    <button onclick="setTheme('burgundy')"
+                        class="w-4 h-4 rounded-full bg-[#7D3238] border border-white shadow-sm hover:scale-110 transition-transform"
+                        title="Classic Burgundy"></button>
+                    <button onclick="setTheme('slate')"
+                        class="w-4 h-4 rounded-full bg-[#1e293b] border border-white shadow-sm hover:scale-110 transition-transform"
+                        title="Deep Slate"></button>
+                    <button onclick="setTheme('navy')"
+                        class="w-4 h-4 rounded-full bg-[#1e3a8a] border border-white shadow-sm hover:scale-110 transition-transform"
+                        title="Navy Blue"></button>
+                    <button onclick="setTheme('emerald')"
+                        class="w-4 h-4 rounded-full bg-[#064e3b] border border-white shadow-sm hover:scale-110 transition-transform"
+                        title="Emerald Green"></button>
                 </div>
 
                 <!-- Print Action Button -->
-                <button id="download-btn" onclick="downloadPDF()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
+                <button id="download-btn" onclick="downloadPDF()"
+                    class="flex items-center gap-2 px-4 py-2 bg-slate-950 text-white rounded-lg hover:bg-slate-800 font-semibold text-sm transition-all shadow-sm">
                     <i data-lucide="download" class="w-4 h-4"></i>
                     Download as PDF
                 </button>
@@ -169,7 +218,8 @@
         </div>
 
         <!-- SOURCE NOTICE -->
-        <div class="mt-3 flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg text-xs">
+        <div
+            class="mt-3 flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg text-xs">
             <span class="flex items-center gap-1.5 font-medium">
                 <i data-lucide="info" class="w-4 h-4"></i>
                 Your layout is ready!. It is fully editable and optimized for both screen and print.
@@ -179,23 +229,27 @@
     </div>
 
     <!-- MAIN RESUME CONTAINER -->
-    <main class="resume-container max-w-4xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none">
-        
+    <main
+        class="resume-container max-w-4xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none">
+
         <!-- HEADER COMPONENT (Burgundy block from WhatsApp Image 2026-06-03 at 5.23.14 PM.jpeg) -->
         <header class="bg-primary text-white p-8 md:p-12 relative transition-all duration-300">
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <!-- Branding Text -->
                 <div class="text-center md:text-left">
-                    <h1 contenteditable="true" class="text-4xl md:text-5xl font-extrabold tracking-wider uppercase leading-none drop-shadow-sm">
+                    <h1 contenteditable="true"
+                        class="text-4xl md:text-5xl font-extrabold tracking-wider uppercase leading-none drop-shadow-sm">
                         Egabo Aaron
                     </h1>
                     <div class="w-16 h-1.5 bg-white/40 my-3 rounded-full mx-auto md:mx-0"></div>
-                    <p contenteditable="true" class="text-lg md:text-xl font-medium tracking-widest text-white/90 uppercase">
+                    <p contenteditable="true"
+                        class="text-lg md:text-xl font-medium tracking-widest text-white/90 uppercase">
                         Software Developer
                     </p>
                 </div>
                 <!-- Brand Bulb Icon Box -->
-                <div class="p-4 bg-white/10 rounded-2xl border border-white/20 shadow-inner flex items-center justify-center">
+                <div
+                    class="p-4 bg-white/10 rounded-2xl border border-white/20 shadow-inner flex items-center justify-center">
                     <i data-lucide="lightbulb" class="w-12 h-12 text-white animate-pulse"></i>
                 </div>
             </div>
@@ -203,10 +257,11 @@
 
         <!-- TWO COLUMN LAYOUT -->
         <div class="grid grid-cols-1 md:grid-cols-12">
-            
+
             <!-- LEFT COLUMN (Contact, Portfolios, Skills) -->
-            <aside class="sidebar-bg md:col-span-4 p-6 md:p-8 border-r border-slate-200/60 flex flex-col gap-8 transition-colors duration-300">
-                
+            <aside
+                class="sidebar-bg md:col-span-4 p-6 md:p-8 border-r border-slate-200/60 flex flex-col gap-8 transition-colors duration-300">
+
                 <!-- CONTACT SECTION -->
                 <section>
                     <div class="flex items-center gap-2 mb-4 border-b border-slate-300/60 pb-2">
@@ -232,7 +287,8 @@
                             <i data-lucide="mail" class="w-4 h-4 mt-0.5 text-slate-400 shrink-0"></i>
                             <div>
                                 <p class="text-xs font-semibold text-slate-400 uppercase">Email</p>
-                                <a href="mailto:aaronegabo@gmail.com" contenteditable="true" class="font-medium text-slate-800 hover:underline">aaronegabo@gmail.com</a>
+                                <a href="mailto:aaronegabo@gmail.com" contenteditable="true"
+                                    class="font-medium text-slate-800 hover:underline">aaronegabo@gmail.com</a>
                             </div>
                         </div>
                     </div>
@@ -242,7 +298,8 @@
                 <section>
                     <div class="flex items-center gap-2 mb-4 border-b border-slate-300/60 pb-2">
                         <i data-lucide="globe" class="w-5 h-5 text-primary"></i>
-                        <h2 class="text-lg font-bold tracking-wider text-slate-800 uppercase text-xs md:text-sm">Websites & Portfolios</h2>
+                        <h2 class="text-lg font-bold tracking-wider text-slate-800 uppercase text-xs md:text-sm">
+                            Websites & Portfolios</h2>
                     </div>
                     <div class="space-y-3 text-sm text-slate-600">
                         <div class="flex items-center gap-3">
@@ -269,11 +326,12 @@
                         <h2 class="text-lg font-bold tracking-wider text-slate-800 uppercase">Skills</h2>
                     </div>
                     <div class="space-y-5 text-xs text-slate-600">
-                        
+
                         <!-- Technical Dev Tools -->
                         <div>
                             <h3 class="font-bold text-slate-800 uppercase mb-2">Languages & Databases</h3>
-                            <p contenteditable="true" class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
+                            <p contenteditable="true"
+                                class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
                                 JavaScript, HTML/CSS, SQL, MySQL, PostgreSQL (Within Supabase)
                             </p>
                         </div>
@@ -281,7 +339,8 @@
                         <!-- Frameworks -->
                         <div>
                             <h3 class="font-bold text-slate-800 uppercase mb-2">Frameworks</h3>
-                            <p contenteditable="true" class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
+                            <p contenteditable="true"
+                                class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
                                 Node.js
                             </p>
                         </div>
@@ -289,7 +348,8 @@
                         <!-- Architecture -->
                         <div>
                             <h3 class="font-bold text-slate-800 uppercase mb-2">Architecture & Protocols</h3>
-                            <p contenteditable="true" class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
+                            <p contenteditable="true"
+                                class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
                                 Offline-First Architecture, Resilient System Design, Simple-Clean Software
                             </p>
                         </div>
@@ -297,8 +357,10 @@
                         <!-- Tools & PM Methodologies -->
                         <div>
                             <h3 class="font-bold text-slate-800 uppercase mb-2">Tools & Methodologies</h3>
-                            <p contenteditable="true" class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
-                                Git, GitHub, VS Code, Vercel, Netlify, SDLC, and SWOT Analysis
+                            <p contenteditable="true"
+                                class="leading-relaxed bg-white/60 p-2 rounded border border-slate-200/50">
+                                Git, GitHub, VS Code, Vercel, Netlify, SDLC, SWOT Analysis and Video Editing using
+                                Google Vids and Speechma
                             </p>
                         </div>
 
@@ -319,7 +381,8 @@
                         <!-- Languages (From Image 2: "Multilingual Communications: English, Madi, Lugbara") -->
                         <div>
                             <h3 class="font-bold text-slate-800 uppercase mb-2">Languages Spoken</h3>
-                            <p contenteditable="true" class="italic font-medium text-slate-700 bg-white/60 p-2 rounded border border-slate-200/50">
+                            <p contenteditable="true"
+                                class="italic font-medium text-slate-700 bg-white/60 p-2 rounded border border-slate-200/50">
                                 English, Madi, Lugbara
                             </p>
                         </div>
@@ -329,7 +392,7 @@
 
             <!-- RIGHT COLUMN (Professional Summary, Experience, Education, Activities) -->
             <section class="md:col-span-8 p-6 md:p-8 bg-white flex flex-col gap-8">
-                
+
                 <!-- PROFESSIONAL SUMMARY -->
                 <section>
                     <div class="flex items-center gap-2 mb-3.5 border-b border-slate-100 pb-2">
@@ -337,7 +400,13 @@
                         <h2 class="text-xl font-bold uppercase tracking-wide text-slate-800">Professional Summary</h2>
                     </div>
                     <p contenteditable="true" class="text-sm leading-relaxed text-slate-600 text-justify">
-                        Passionate software engineering student dedicated to developing practical and reliable software solutions that address real-world challenges. Expertise in designing offline-first applications that function seamlessly without stable internet connectivity, alongside creating clean database architectures and engaging with open-source communities. As a co-founder and tech lead at RENOA, a strong commitment to fostering collaboration and transforming innovative ideas into effective digital tools that benefit the community drives every project. Focus on building systems that prioritize simplicity, efficiency, and resilience.
+                        Passionate software engineering student dedicated to developing practical and reliable software
+                        solutions that address real-world challenges. Expertise in designing offline-first applications
+                        that function seamlessly without stable internet connectivity, alongside creating clean database
+                        architectures and engaging with open-source communities. As a co-founder and tech lead at RENOA,
+                        a strong commitment to fostering collaboration and transforming innovative ideas into effective
+                        digital tools that benefit the community drives every project. Focus on building systems that
+                        prioritize simplicity, efficiency, and resilience.
                     </p>
                 </section>
 
@@ -347,59 +416,93 @@
                         <i data-lucide="briefcase" class="w-5 h-5 text-primary"></i>
                         <h2 class="text-xl font-bold uppercase tracking-wide text-slate-800">Experience</h2>
                     </div>
-                    
+
                     <div class="space-y-6">
                         <!-- Experience Item 1 -->
-                        <div class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
+                        <div
+                            class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
                             <div class="flex flex-wrap justify-between items-start gap-1">
-                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">Student Innovator and Pitch Participant</h3>
-                                <span contenteditable="true" class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">05/2026</span>
+                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">
+                                    Student Innovator and Pitch Participant</h3>
+                                <span contenteditable="true"
+                                    class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">05/2026</span>
                             </div>
-                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Gemini Career Glow Up Night</p>
+                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Gemini Career Glow Up
+                                Night</p>
                             <ul class="list-disc list-outside ml-4 mt-2 text-xs text-slate-600 space-y-1">
-                                <li contenteditable="true">Participated in a high stakes pitch night competition where we had to come up with a product using Nano Banana and pitch it in under 60 seconds.</li>
+                                <li contenteditable="true">Participated in a high stakes pitch night competition where
+                                    we had to come up with a product using Nano Banana and pitch it in under 60 seconds.
+                                </li>
                                 <li contenteditable="true">Live Online Workshop</li>
                             </ul>
                         </div>
 
                         <!-- Experience Item 2 -->
-                        <div class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
+                        <div
+                            class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
                             <div class="flex flex-wrap justify-between items-start gap-1">
-                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">Co-Founder and Technical Project Manager</h3>
-                                <span contenteditable="true" class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">04/2026 to Current</span>
+                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">
+                                    Co-Founder and Technical Project Manager</h3>
+                                <span contenteditable="true"
+                                    class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">04/2026
+                                    to Current</span>
                             </div>
                             <p contenteditable="true" class="text-xs font-bold text-primary mt-1">RENOA - Kampala</p>
                             <ul class="list-disc list-outside ml-4 mt-2 text-xs text-slate-600 space-y-1">
-                                <li contenteditable="true">Co-Founded a student-led Software Engineering Firm to translate academic knowledge learnt into industry standard projects.</li>
-                                <li contenteditable="true">Build reliable, efficient and simple software that solves community problems especially those that address the SDGs.</li>
+                                <li contenteditable="true">Co-Founded a student-led Software Engineering Firm to
+                                    translate academic knowledge learnt into industry standard projects.</li>
+                                <li contenteditable="true">Build reliable, efficient and simple software that solves
+                                    community problems especially those that address the SDGs.</li>
                             </ul>
                         </div>
 
                         <!-- Experience Item 3 -->
-                        <div class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
+                        <div
+                            class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
                             <div class="flex flex-wrap justify-between items-start gap-1">
-                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">Student Innovator and Exhibitor</h3>
-                                <span contenteditable="true" class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">05/2026 to 05/2026</span>
+                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">
+                                    Student Innovator and Exhibitor</h3>
+                                <span contenteditable="true"
+                                    class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">05/2026
+                                    to 05/2026</span>
                             </div>
-                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Appropriate Technologies Expo and Launch - UMA Showgrounds, Kampala</p>
+                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Appropriate
+                                Technologies Expo and Launch - UMA Showgrounds, Kampala</p>
                             <ul class="list-disc list-outside ml-4 mt-2 text-xs text-slate-600 space-y-1">
-                                <li contenteditable="true">Exhibited MedSwift, an offline-first Progressive Web Application (PWA) designed to prevent clinical errors and facilitate pharmaceutical safety verification without stable internet connectivity.</li>
-                                <li contenteditable="true">Showcased EcoFarm, a digital agricultural management platform engineered with a symbol-based interface to streamline market access and logistics for regional farmers.</li>
-                                <li contenteditable="true">Pitched enterprise architecture blueprints and innovation-to-impact narratives directly to cross-industry stakeholders, tech leaders, and community development representatives.</li>
+                                <li contenteditable="true">Exhibited MedSwift, an offline-first Progressive Web
+                                    Application (PWA) designed to prevent clinical errors and facilitate pharmaceutical
+                                    safety verification without stable internet connectivity.</li>
+                                <li contenteditable="true">Showcased EcoFarm, a digital agricultural management platform
+                                    engineered with a symbol-based interface to streamline market access and logistics
+                                    for regional farmers.</li>
+                                <li contenteditable="true">Pitched enterprise architecture blueprints and
+                                    innovation-to-impact narratives directly to cross-industry stakeholders, tech
+                                    leaders, and community development representatives.</li>
                             </ul>
                         </div>
 
                         <!-- Experience Item 4 -->
-                        <div class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
+                        <div
+                            class="experience-item relative pl-4 border-l-2 border-primary/30 hover:border-primary transition-colors">
                             <div class="flex flex-wrap justify-between items-start gap-1">
-                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">National Finalist (Cloud Track)</h3>
-                                <span contenteditable="true" class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">09/2025 to 01/2026</span>
+                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-tight">
+                                    National Finalist (Cloud Track)</h3>
+                                <span contenteditable="true"
+                                    class="text-xs font-semibold px-2 py-0.5 bg-slate-100 text-slate-600 rounded">09/2025
+                                    to 01/2026</span>
                             </div>
-                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Huawei ICT Competition - Kampala</p>
+                            <p contenteditable="true" class="text-xs font-bold text-primary mt-1">Huawei ICT Competition
+                                - Kampala</p>
                             <ul class="list-disc list-outside ml-4 mt-2 text-xs text-slate-600 space-y-1">
-                                <li contenteditable="true">Undertook rigorous deep dive into Huawei HCIA curriculum, mastering fundamentals of cloud computing, big data, and artificial intelligence, and applied knowledge to compete nationally, earning spot as Cloud Track National Finalist.</li>
-                                <li contenteditable="true">Competed nationally in global competition, specializing in artificial intelligence, cloud computing, cloud services, and big data, demonstrating advanced technical skills.</li>
-                                <li contenteditable="true">Completed HCIA training tracks in artificial intelligence, cloud architecture, cloud computing, and big data.</li>
+                                <li contenteditable="true">Undertook rigorous deep dive into Huawei HCIA curriculum,
+                                    mastering fundamentals of cloud computing, big data, and artificial intelligence,
+                                    and applied knowledge to compete nationally, earning spot as Cloud Track National
+                                    Finalist.</li>
+                                <li contenteditable="true">Competed nationally in global competition, specializing in
+                                    artificial intelligence, cloud computing, cloud services, and big data,
+                                    demonstrating advanced technical skills.</li>
+                                <li contenteditable="true">Completed HCIA training tracks in artificial intelligence,
+                                    cloud architecture, cloud computing, and big data.</li>
                             </ul>
                         </div>
                     </div>
@@ -415,17 +518,25 @@
                     <div class="bg-slate-50/50 rounded-xl p-5 border border-slate-100">
                         <div class="flex flex-wrap justify-between items-start gap-2">
                             <div>
-                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-snug">Bachelor of Science: Software Engineering</h3>
-                                <p contenteditable="true" class="text-xs font-bold text-primary mt-0.5">CAVENDISH UNIVERSITY UGANDA - Nsambya, Kampala</p>
+                                <h3 contenteditable="true" class="font-bold text-slate-900 text-base leading-snug">
+                                    Bachelor of Science: Software Engineering</h3>
+                                <p contenteditable="true" class="text-xs font-bold text-primary mt-0.5">CAVENDISH
+                                    UNIVERSITY UGANDA - Nsambya, Kampala</p>
                             </div>
-                            <span contenteditable="true" class="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded">Expected 08/2029</span>
+                            <span contenteditable="true"
+                                class="text-xs font-semibold px-2 py-0.5 bg-primary/10 text-primary rounded">Expected
+                                08/2029</span>
                         </div>
-                        
+
                         <div class="mt-4 space-y-2 text-xs text-slate-600">
-                            <p><span class="font-bold text-slate-800">Concentrations:</span> <span contenteditable="true">Software Architecture and Intelligent Systems</span></p>
+                            <p><span class="font-bold text-slate-800">Concentrations:</span> <span
+                                    contenteditable="true">Software Architecture and Intelligent Systems</span></p>
                             <p class="leading-relaxed">
-                                <span class="font-bold text-slate-800">Related Coursework:</span> 
-                                <span contenteditable="true">Computer Architecture and Organization, Discrete Mathematics, Calculus in Software Engineering, Artificial Intelligence, Web Development, Systems Analysis and Design, Principles of Programming, Numerical Analysis and Design, Database Systems and Management</span>
+                                <span class="font-bold text-slate-800">Related Coursework:</span>
+                                <span contenteditable="true">Computer Architecture and Organization, Discrete
+                                    Mathematics, Calculus in Software Engineering, Artificial Intelligence, Web
+                                    Development, Systems Analysis and Design, Principles of Programming, Numerical
+                                    Analysis and Design, Database Systems and Management</span>
                             </p>
                             <div class="pt-2 flex items-center gap-1.5 font-bold text-slate-800">
                                 <i data-lucide="award" class="w-4 h-4 text-emerald-500"></i>
@@ -439,61 +550,86 @@
                 <section>
                     <div class="flex items-center gap-2 mb-4 border-b border-slate-100 pb-2">
                         <i data-lucide="award" class="w-5 h-5 text-primary"></i>
-                        <h2 class="text-xl font-bold uppercase tracking-wide text-slate-800">Activities and Leadership</h2>
+                        <h2 class="text-xl font-bold uppercase tracking-wide text-slate-800">Activities and Leadership
+                        </h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        
+
                         <!-- Activity 1 -->
-                        <div class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
+                        <div
+                            class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start">
-                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">GitHub Developer Community</h3>
-                                    <span contenteditable="true" class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded shrink-0">May 2026 - Present</span>
+                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">GitHub Developer
+                                        Community</h3>
+                                    <span contenteditable="true"
+                                        class="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-1.5 py-0.5 rounded shrink-0">May
+                                        2026 - Present</span>
                                 </div>
-                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Active Contributor (Ranked 105th nationally as of now)</p>
+                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Active
+                                    Contributor (Ranked 105th nationally as of now)</p>
                                 <p contenteditable="true" class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                    Maintain a high-ranking professional online presence among open-source developers in Uganda by consistently committing code and collaborating on regional technical initiatives.
+                                    Maintain a high-ranking professional online presence among open-source developers in
+                                    Uganda by consistently committing code and collaborating on regional technical
+                                    initiatives.
                                 </p>
                             </div>
                         </div>
 
                         <!-- Activity 2 -->
-                        <div class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
+                        <div
+                            class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start">
-                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">Akili Za Kesho Ventures</h3>
-                                    <span contenteditable="true" class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">May 2026 - Present</span>
+                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">Akili Za Kesho
+                                        Ventures</h3>
+                                    <span contenteditable="true"
+                                        class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">May
+                                        2026 - Present</span>
                                 </div>
-                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Technical Trainer & Volunteer</p>
+                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Technical
+                                    Trainer & Volunteer</p>
                                 <p contenteditable="true" class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                    Facilitate knowledge-sharing initiatives focused on data utilization, helping transform local challenges into innovative, bankable sustainable ventures in relation to the SDGs.
+                                    Facilitate knowledge-sharing initiatives focused on data utilization, helping
+                                    transform local challenges into innovative, bankable sustainable ventures in
+                                    relation to the SDGs.
                                 </p>
                             </div>
                         </div>
 
                         <!-- Activity 3 -->
-                        <div class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
+                        <div
+                            class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start">
-                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">YinAndYangShadow (YouTube)</h3>
-                                    <span contenteditable="true" class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">March 2026 - Present</span>
+                                    <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">YinAndYangShadow
+                                        (YouTube)</h3>
+                                    <span contenteditable="true"
+                                        class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">March
+                                        2026 - Present</span>
                                 </div>
-                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Content Creator</p>
+                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Content Creator
+                                </p>
                                 <p contenteditable="true" class="text-xs text-slate-500 mt-2 leading-relaxed">
-                                    Strategize, script, and manage a faceless YouTube channel focused on the Dark Psychology niche, driving audience engagement and content production.
+                                    Strategize, script, and manage a faceless YouTube channel focused on the Dark
+                                    Psychology niche, driving audience engagement and content production.
                                 </p>
                             </div>
                         </div>
 
                         <!-- Activity 4 -->
-                        <div class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
+                        <div
+                            class="activity-item p-4 bg-slate-50/40 rounded-xl border border-slate-100 flex flex-col justify-between">
                             <div>
                                 <div class="flex justify-between items-start">
                                     <h3 contenteditable="true" class="font-bold text-slate-900 text-sm">Naano</h3>
-                                    <span contenteditable="true" class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">April 2026 - Present</span>
+                                    <span contenteditable="true"
+                                        class="text-[10px] bg-slate-100 text-slate-600 font-semibold px-1.5 py-0.5 rounded shrink-0">April
+                                        2026 - Present</span>
                                 </div>
-                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Naano Creator</p>
+                                <p contenteditable="true" class="text-xs text-primary font-medium mt-1">Naano Creator
+                                </p>
                                 <p contenteditable="true" class="text-xs text-slate-500 mt-2 leading-relaxed">
                                     I architect high-intent LinkedIn growth workflows through marketing as a strategy.
                                 </p>
@@ -511,7 +647,7 @@
 
     <!-- FOOTER COMPONENT (HIDDEN IN PRINT) -->
     <footer class="no-print text-center text-xs text-slate-400 py-8">
-        <p>&copy; 2026 Egabo Aaron. Built with precision and tailored from reference snapshots.</p>
+        <p>&copy; 2026 Egabo Aaron. Built with precision and tailored for tech personnel.</p>
     </footer>
 
     <!-- INTERACTIVE SCRIPTS -->
@@ -526,48 +662,44 @@
             body.classList.add('theme-' + themeName);
         }
 
-        // Generate Premium Direct Download PDF
+        // Generate Single-Page PDF
         async function downloadPDF() {
             const { jsPDF } = window.jspdf;
             const element = document.querySelector('.resume-container');
             const button = document.getElementById('download-btn');
             const originalHTML = button.innerHTML;
-            
-            button.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Generating Premium PDF...';
+
+            button.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Generating Optimized PDF...';
             lucide.createIcons();
             button.disabled = true;
 
-            // Strip the 'screenshot' UI elements (shadows, rounded corners)
-            // so the captured image is a flush, professional document.
-            const originalClasses = element.className;
-            element.classList.remove('shadow-xl', 'rounded-2xl', 'overflow-hidden');
-            
             try {
-                // scale 2 with jpeg 0.95 gives high quality and tiny file size
+                // Scale of 2 provides Retina/HD quality while keeping the pixel count manageable
                 const scale = 2;
-                const canvas = await html2canvas(element, { 
-                    scale: scale, 
+                const canvas = await html2canvas(element, {
+                    scale: scale,
                     useCORS: true,
-                    backgroundColor: '#ffffff'
+                    backgroundColor: '#ffffff',
+                    logging: false
                 });
-                
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                
+
+                // JPEG at 92% quality is visually indistinguishable from PNG but drastically reduces file size
+                const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+                // Create PDF matching the exact dimensions of the canvas
                 const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'px',
                     format: [canvas.width / scale, canvas.height / scale]
                 });
-                
+
+                // Add the highly optimized image to the PDF
                 pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width / scale, canvas.height / scale);
                 pdf.save('Egabo_Aaron_Resume.pdf');
             } catch (error) {
                 console.error("Error generating PDF:", error);
                 alert("Failed to generate PDF");
             } finally {
-                // Restore UI elements
-                element.className = originalClasses;
-                
                 button.innerHTML = originalHTML;
                 button.disabled = false;
                 lucide.createIcons();
@@ -575,4 +707,5 @@
         }
     </script>
 </body>
+
 </html>
